@@ -1,0 +1,54 @@
+{
+  "name": "TL Ranks",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "Displays league icons and other information for TeamLiquid forum users.",
+  "browser_action": {
+    "default_icon": "/images/icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://www.teamliquid.net/forum/viewmessage.php?topic_id=*"],
+      "js": ["tlranks.js", "jquery-1.9.1.min.js"]
+    }
+  ],
+  "permissions": [
+	"http://sc2ranks.com/*", "http://www.sc2ranks.com/*"
+  ],
+  
+  "web_accessible_resources": [
+	"images/grandmaster_0.png",
+	"images/grandmaster_1.png",
+	"images/grandmaster_2.png",
+	"images/grandmaster_3.png",
+	"images/master_0.png",
+	"images/master_1.png",
+	"images/master_2.png",
+	"images/master_3.png",
+	"images/diamond_0.png",
+	"images/diamond_1.png",
+	"images/diamond_2.png",
+	"images/diamond_3.png",
+	"images/platinum_0.png",
+	"images/platinum_1.png",
+	"images/platinum_2.png",
+	"images/platinum_3.png",
+	"images/gold_0.png",
+	"images/gold_1.png",
+	"images/gold_2.png",
+	"images/gold_3.png",
+	"images/silver_0.png",
+	"images/silver_1.png",
+	"images/silver_2.png",
+	"images/silver_3.png",
+	"images/bronze_0.png",
+	"images/bronze_1.png",
+	"images/bronze_2.png",
+	"images/bronze_3.png",
+	"images/none.png",
+	"images/Protoss.png",
+	"images/Zerg.png",
+	"images/Terran.png",
+	"images/Random.png"
+  ]
+}
