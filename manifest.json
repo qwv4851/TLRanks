@@ -46,9 +46,9 @@
 	"images/bronze_2.png",
 	"images/bronze_3.png",
 	"images/none.png",
-	"images/Protoss.png",
-	"images/Zerg.png",
-	"images/Terran.png",
-	"images/Random.png"
+	"images/protoss.png",
+	"images/zerg.png",
+	"images/terran.png",
+	"images/random.png"
   ]
 }

@@ -99,6 +99,7 @@ function parseProfilePage(html, tlUser) {
       mode.tier = leagueAndTier.substr(leagueAndTier.length - 1) - 1;
       mode.worldRank = numbers[0].innerText;
       mode.points = numbers[1].innerText;
+      mode.race = $(this).find(".character")[0].children[0].className;
       if (numbers[2] != undefined) {
         mode.divisionRank = numbers[2].innerText;
         mode.regionRank = numbers[3].innerText;
@@ -126,12 +127,19 @@ function updateForumUser(user, tlUser) {
   var s = tlUser.header.innerHTML.split("&nbsp;");
   var profileLink = getProfileLink(user.name, user.profile);
   var leagueIcon = getLeagueIcon(user.modes[0].league, user.modes[0].tier);
-  tlUser.header.innerHTML = "&nbsp;" + s[1] + "&nbsp;" + profileLink + "&nbsp;" + leagueIcon + s[3];
+  var raceIcon = getRaceIcon(user.modes[0].race);
+  tlUser.header.innerHTML = "&nbsp;" + s[1] + "&nbsp;" + profileLink + "&nbsp;" + leagueIcon + "&nbsp;" + raceIcon + s[3];
 }
 
 // Given a league (bronze-grandmaster) and tier (0-3), get the url to the corresponding league icon.
 function getLeagueIcon(league, tier) {
   var url = getURL("images/" + league + "_" + tier + ".png");
+  return "<img style='vertical-align:middle;' src='" + url + "'>";
+}
+
+// Given a race, get the corresponding icon.
+function getRaceIcon(race) {
+  var url = getURL("images/" + race + ".png");
   return "<img style='vertical-align:middle;' src='" + url + "'>";
 }
 
