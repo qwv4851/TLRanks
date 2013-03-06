@@ -162,14 +162,16 @@ function getUsersFromForum(html) {
   var users = [];
   var userHeaders = html.find(".forummsginfo");
   $.each(userHeaders, function() {
-    var user = {};
-    if (this.children.length > 1) { // mods have their names contained within a span
-      user.name = this.children[1].innerText;
-    } else {
-      user.name = this.innerText.split(" ")[0].trim();
+    if (this.localName == "span") {
+      var user = {};
+      if (this.children.length > 1) { // mods have their names contained within a span
+        user.name = this.children[1].innerText;
+      } else {
+        user.name = this.innerText.split(" ")[0].trim();
+      }
+      user.header = $(this)[0];
+      users.push(user);
     }
-    user.header = $(this)[0];
-    users.push(user);
   });
   return users;
 }
