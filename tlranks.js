@@ -83,7 +83,9 @@ function sortUsersByRank(users) {
 // header on TeamLiquid is updated to show their stats.
 function parseProfilePage(html, tlUser) {
   var user = {};
-  user.name = html.find(".name")[0].children[0].innerText;
+  var nameAndRegion = html.find(".name")[0];
+  user.name = nameAndRegion.children[0].innerText;
+  user.region = nameAndRegion.innerText.match(/\((.*?)\)/)[1];
   var address = extractString(html.find(".maps")[0].children[0].outerHTML);
   user.profile = address.substr(0, address.length - 6);
   user.modes = [];
@@ -128,7 +130,7 @@ function updateForumUser(user, tlUser) {
   var profileLink = getProfileLink(user.name, user.profile);
   var leagueIcon = getLeagueIcon(user.modes[0].league, user.modes[0].tier);
   var raceIcon = getRaceIcon(user.modes[0].race);
-  tlUser.header.innerHTML = "&nbsp;" + s[1] + "&nbsp;" + profileLink + "&nbsp;" + leagueIcon + "&nbsp;" + raceIcon + s[3];
+  tlUser.header.innerHTML = "&nbsp;" + user.region + "&nbsp;" + s[1] + "&nbsp;" + profileLink + "&nbsp;" + leagueIcon + "&nbsp;" + raceIcon + s[3];
 }
 
 // Given a league (bronze-grandmaster) and tier (0-3), get the url to the corresponding league icon.
