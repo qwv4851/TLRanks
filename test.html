@@ -3,10 +3,27 @@
 <script src="jquery-1.9.1.min.js"></script>
 <script src="tlranks.js"></script>
 <script>
-   var testUrl = "http://www.teamliquid.net/forum/viewmessage.php?topic_id=136013";
   $(document).ready(function() {
-    loadPage(testUrl, onTLPageLoaded);
+    //var testUrl = "http://www.teamliquid.net/forum/viewmessage.php?topic_id=136013";
+    //loadPage(testUrl, onTLPageLoaded);
+    addUserToDB(getTestUser());
   });
+  
+  // Returns fake user data to use for testing.
+  function getTestUser() {
+    var testUser = {};
+    testUser.name = "testName";
+    testUser.profile = "testProfile";
+    testUser.region = "AM";
+    testUser.modes = [];
+    for (var i = 0; i < 4; i++) {
+      var mode = {};
+      mode.name = i + 1;
+      mode.league = "Masters";
+      testUser.modes.push(mode);
+    }
+    return testUser;
+  }
 </script>
 <head>
 </head>
