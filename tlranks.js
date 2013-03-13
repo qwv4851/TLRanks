@@ -113,6 +113,8 @@ function parseProfilePage(html, tlUser) {
     }
   });
   
+  addUserToDB(user);
+  
   if (user.modes.length > 0 && user.modes[0].name == "1 vs 1") {
     updateForumUser(user, tlUser);
   }
@@ -190,4 +192,16 @@ function findNode(html, className) {
 function getLeagueIndex(league) {
   var leagues = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster"];
   return leagues.indexOf(league);
+}
+
+// Sends user information to be added to the database.
+function addUserToDB(user) {
+  $.ajax({
+    type: "POST",
+    url: "http://localhost/tlranks/add_user.php",
+    data: user,
+    error: function(e) {
+        console.log(e.message);
+    }
+  });
 }
