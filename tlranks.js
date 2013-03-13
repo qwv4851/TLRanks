@@ -94,7 +94,7 @@ function parseProfilePage(html, tlUser) {
     var header = $(this).find(".headertext");
     if (header.length > 0) {
       var mode = {};
-      mode.name = header[0].innerText;
+      mode.name = parseInt(header[0].innerText.charAt(0));
       var numbers = $(this).find(".number");
       var leagueAndTier = $(this).find(".badge")[1].className;
       mode.league = (leagueAndTier.split("badge-")[1]).trim();
@@ -115,7 +115,7 @@ function parseProfilePage(html, tlUser) {
   
   addUserToDB(user);
   
-  if (user.modes.length > 0 && user.modes[0].name == "1 vs 1") {
+  if (user.modes.length > 0 && user.modes[0].name == 1) {
     updateForumUser(user, tlUser);
   }
 }
