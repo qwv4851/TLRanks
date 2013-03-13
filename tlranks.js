@@ -98,17 +98,16 @@ function parseProfilePage(html, tlUser) {
       var numbers = $(this).find(".number");
       var leagueAndTier = $(this).find(".badge")[1].className;
       mode.league = (leagueAndTier.split("badge-")[1]).trim();
+      mode.leagueIndex = getLeagueIndex(mode.league);
       mode.tier = leagueAndTier.substr(leagueAndTier.length - 1) - 1;
-      mode.worldRank = numbers[0].innerText;
-      mode.points = numbers[1].innerText;
+      mode.worldRank = numFromStr(numbers[0].innerText);
+      mode.points = numFromStr(numbers[1].innerText);
       mode.race = $(this).find(".character")[0].children[0].className;
-      if (numbers[2] != undefined) {
-        mode.divisionRank = numbers[2].innerText;
-        mode.regionRank = numbers[3].innerText;
-      }
-      mode.wins = $(this).find(".green")[0].innerText;
+      mode.divisionRank = numbers[2] != undefined ? numFromStr(numbers[2].innerText) : null;
+      mode.regionRank = numbers[3] != undefined ? numFromStr(numbers[3].innerText) : null;
+      mode.wins = parseInt($(this).find(".green")[0].innerText);
       var red = $(this).find(".red");
-      mode.losses = red[0] != undefined ? red[0].innerText : 0;
+      mode.losses = red[0] != undefined ? parseInt(red[0].innerText) : 0;
       user.modes.push(mode);
     }
   });
@@ -118,6 +117,13 @@ function parseProfilePage(html, tlUser) {
   if (user.modes.length > 0 && user.modes[0].name == 1) {
     updateForumUser(user, tlUser);
   }
+}
+
+// Extracts the first number from the given string.
+function numFromStr(str) {
+  var matches = str.match(/\d{1,3}([,]\d{3})*$/);
+  var noCommas = matches[0].replace(",", "");
+  return parseInt(noCommas);
 }
 
 // Extracts the first instance of a quoted string from html. Used to extract urls.
@@ -190,8 +196,8 @@ function findNode(html, className) {
 
 // Gets the corresponding index to a given league name.
 function getLeagueIndex(league) {
-  var leagues = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster"];
-  return leagues.indexOf(league);
+  var leagues = ["bronze", "silver", "gold", "platinum", "diamond", "master", "grandmaster"];
+  return leagues.indexOf(league.toLowerCase());
 }
 
 // Sends user information to be added to the database.
@@ -200,8 +206,12 @@ function addUserToDB(user) {
     type: "POST",
     url: "http://localhost/tlranks/add_user.php",
     data: user,
+    success: function(data) {
+      if (data.length > 0)
+        console.log(data);
+    },
     error: function(e) {
-        console.log(e.message);
+      console.log(e.message);
     }
   });
 }
