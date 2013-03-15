@@ -25,32 +25,41 @@ function onTLPageLoaded(html) {
   }
   function onDBNotFound(e) {
     $.each(tlUsers, function() {
-      var searchURL = "http://www.sc2ranks.com/search/exact/all/" + this.name;
-      loadPage(searchURL, onSearchPageLoad, this);
+      searchForTLUser(this);
     });
   }
 }
 
+// Creates a search request on sc2ranks for the given user.
+function searchForTLUser(tlUser) {
+  var searchURL = "http://www.sc2ranks.com/search/exact/all/" + tlUser.name;
+  loadPage(searchURL, onSearchPageLoad, tlUser);
+}
+
+// Tests to see if the database is accessible.
 function testDBExists(onDBFound, onDBNotFound) {
   $.ajax({
     url: "http://localhost/tlranks/get_user.php",
+    dataType: "json",
     success: onDBFound,
     error: onDBNotFound,
-    dataType: "jsonp"
   }); 
 }
 
+// Retrieves information from the database for the given user. Searches for the user if 
+// not already in the database.
 function getUserFromDB(tlUser) {
   $.ajax({
     url: "http://localhost/tlranks/get_user.php",
     data: {name: tlUser.name},
-    dataType: "jsonp",
-    jsonp: "callback",
+    dataType: "json",
     success: function(user) {
       if (user.modes.length > 0) {
         user.modes[0].league = getLeague(user.modes[0].leagueIndex);
         user.modes[0].race = getRace(user.modes[0].race);
         updateForumUser(user, tlUser);
+      } else if (user.profile == null) {
+        searchForTLUser(tlUser);
       }
     },
     error: function(e) {
