@@ -49,15 +49,22 @@ function testDBExists(onDBFound, onDBNotFound) {
 // Retrieves information from the database for the given user. Searches for the user if 
 // not already in the database.
 function getUserFromDB(tlUser) {
+  var lifespan = 1209600000; // 14 days in milliseconds
   $.ajax({
     url: "http://localhost/tlranks/get_user.php",
     data: {name: tlUser.name},
     dataType: "json",
     success: function(user) {
       if (user.modes.length > 0) {
-        user.modes[0].league = getLeague(user.modes[0].leagueIndex);
-        user.modes[0].race = getRace(user.modes[0].race);
-        updateForumUser(user, tlUser);
+        var timestamp = new Date(user.modes[0].date);
+        var now = new Date();
+        if (now - timestamp > lifespan) {
+          searchForTLUser(tlUser);
+        } else {
+          user.modes[0].league = getLeague(user.modes[0].leagueIndex);
+          user.modes[0].race = getRace(user.modes[0].race);
+          updateForumUser(user, tlUser);
+        }
       } else if (user.profile == null) {
         searchForTLUser(tlUser);
       }
