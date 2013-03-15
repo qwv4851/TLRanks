@@ -17,9 +17,45 @@ function loadPage(url, onSuccess, tlUser) {
 // to search each poster on sc2ranks.
 function onTLPageLoaded(html) {
   var tlUsers = getUsersFromForum(html);
-  $.each(tlUsers, function() {
-    var searchURL = "http://www.sc2ranks.com/search/exact/all/" + this.name;
-    loadPage(searchURL, onSearchPageLoad, this);
+  testDBExists(onDBFound, onDBNotFound);
+  function onDBFound(data) {
+    $.each(tlUsers, function() {
+      getUserFromDB(this);
+    });
+  }
+  function onDBNotFound(e) {
+    $.each(tlUsers, function() {
+      var searchURL = "http://www.sc2ranks.com/search/exact/all/" + this.name;
+      loadPage(searchURL, onSearchPageLoad, this);
+    });
+  }
+}
+
+function testDBExists(onDBFound, onDBNotFound) {
+  $.ajax({
+    url: "http://localhost/tlranks/get_user.php",
+    success: onDBFound,
+    error: onDBNotFound,
+    dataType: "jsonp"
+  }); 
+}
+
+function getUserFromDB(tlUser) {
+  $.ajax({
+    url: "http://localhost/tlranks/get_user.php",
+    data: {name: tlUser.name},
+    dataType: "jsonp",
+    jsonp: "callback",
+    success: function(user) {
+      if (user.modes.length > 0) {
+        user.modes[0].league = getLeague(user.modes[0].leagueIndex);
+        user.modes[0].race = getRace(user.modes[0].race);
+        updateForumUser(user, tlUser);
+      }
+    },
+    error: function(e) {
+      console.log(e.message);
+    },
   });
 }
 
@@ -194,10 +230,15 @@ function findNode(html, className) {
   return -1;
 }
 
+var leagues = ["bronze", "silver", "gold", "platinum", "diamond", "master", "grandmaster"];
 // Gets the corresponding index to a given league name.
 function getLeagueIndex(league) {
-  var leagues = ["bronze", "silver", "gold", "platinum", "diamond", "master", "grandmaster"];
   return leagues.indexOf(league.toLowerCase());
+}
+
+// Gets the corresponding league to a given index
+function getLeague(index) {
+  return leagues[index];
 }
 
 // Sends user information to be added to the database.
@@ -214,4 +255,14 @@ function addUserToDB(user) {
       console.log(e.message);
     }
   });
+}
+
+// Given a letter, gets the corresponding race
+function getRace(letter) {
+  switch (letter) {
+    case 'z': return "zerg"; break;
+    case 't': return "terran"; break;
+    case 'p': return "protoss"; break;
+    case 'r': return "random"; break;
+  }
 }
