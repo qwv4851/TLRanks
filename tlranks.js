@@ -64,7 +64,7 @@ function isUserExpired(user, lifespan) {
 
 // Creates a search request on sc2ranks for the given user.
 function searchForTLUser(tlUser) {
-  var searchURL = "http://www.sc2ranks.com/search/exact/all/" + tlUser.name;
+  var searchURL = "http://www.sc2ranks.com/search/exact/all/" + simplifyName(tlUser.name);
   loadPage(searchURL, onSearchPageLoad, tlUser);
 }
 
@@ -83,7 +83,7 @@ function testDBExists(onDBFound, onDBNotFound) {
 function getUserFromDB(tlUser) {
   $.ajax({
     url: "http://" + hostname + "/get_user.php",
-    data: {name: tlUser.name},
+    data: {name: simplifyName(tlUser.name)},
     dataType: "json",
     success: function(user) {
       if (user.modes.length > 0) {
@@ -200,6 +200,10 @@ function parseProfilePage(html, tlUser) {
   }
 }
 
+function simplifyName(name) {
+  return name.replace(/\W/g, "");
+}
+
 // Extracts the first number from the given string.
 function numFromStr(str) {
   var matches = str.match(/\d{1,3}([,]\d{3})*$/);
@@ -216,7 +220,7 @@ function extractString(html) {
 // Updates the post header of the given tlUser to link the profile page and show league.
 function updateForumUser(user, tlUser) {
   var s = tlUser.header.innerHTML.split("&nbsp;");
-  var profileLink = getProfileLink(user.name, user.profile);
+  var profileLink = getProfileLink(tlUser.name, user.profile);
   var leagueIcon = getLeagueIcon(user.modes[0].league, user.modes[0].tier);
   var raceIcon = getRaceIcon(user.modes[0].race);
   tlUser.header.innerHTML = "&nbsp;" + user.region + "&nbsp;" + s[1] + "&nbsp;" + profileLink + "&nbsp;" + leagueIcon + raceIcon + s[3];
@@ -257,7 +261,7 @@ function getUsersFromForum(html) {
       if (this.children.length > 1) { // mods have their names contained within a span
         user.name = this.children[1].innerText;
       } else {
-        user.name = this.innerText.split(" ")[0].trim();
+        user.name = this.innerHTML.split("&nbsp;")[2].trim();
       }
       user.header = $(this)[0];
       users.push(user);
