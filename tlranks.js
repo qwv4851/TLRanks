@@ -219,20 +219,20 @@ function updateForumUser(user, tlUser) {
   var profileLink = getProfileLink(user.name, user.profile);
   var leagueIcon = getLeagueIcon(user.modes[0].league, user.modes[0].tier);
   var raceIcon = getRaceIcon(user.modes[0].race);
-  tlUser.header.innerHTML = "&nbsp;" + user.region + "&nbsp;" + s[1] + "&nbsp;" + profileLink + "&nbsp;" + leagueIcon + "&nbsp;" + raceIcon + s[3];
+  tlUser.header.innerHTML = "&nbsp;" + user.region + "&nbsp;" + s[1] + "&nbsp;" + profileLink + "&nbsp;" + leagueIcon + raceIcon + s[3];
   localStorage[tlUser.name] = JSON.stringify(user);
 }
 
 // Given a league (bronze-grandmaster) and tier (0-3), get the url to the corresponding league icon.
 function getLeagueIcon(league, tier) {
   var url = getURL("images/" + league + "_" + tier + ".png");
-  return "<img style='vertical-align:middle;' src='" + url + "'>";
+  return "<img style='vertical-align:middle;' src='" + url + "' title='" + league + "' alt='" + league + "'>";
 }
 
 // Given a race, get the corresponding icon.
 function getRaceIcon(race) {
   var url = getURL("images/" + race + ".png");
-  return "<img style='vertical-align:middle;' src='" + url + "'>";
+  return "<img style='vertical-align:middle;' src='" + url + "' title='" + race + "' alt='" + race + "'>";
 }
 
 // Fixes a relative URL for the given resource.
