@@ -1,4 +1,5 @@
 var hostname = "76.104.218.28/tlranks";
+//var hostname = "localhost/tlranks";
 
 // Entry point of the chrome extension.
 window.onload = function() {
@@ -9,10 +10,15 @@ window.onload = function() {
 function loadPage(url, onSuccess, tlUser) {
   $.ajax({
     url: url,
-    success: function(data) {
-      onSuccess($(data), tlUser);
+    success: function(html) {
+      onSuccess($(stripRelativeSrc(html)), tlUser);
     }
   });
+}
+
+// Strips src links with relative urls from the given source.
+function stripRelativeSrc(html) {
+  return html.replace(/src="\/.*?"/g, "");
 }
 
 // Called when a TeamLiquid page loads. Extracts poster information and attempts 
