@@ -1,5 +1,7 @@
 var hostname = "76.104.218.28/tlranks";
 //var hostname = "localhost/tlranks";
+var dbLifespan = 604800000; // 7 days in milliseconds
+var cacheLifespan = 172800000 // 2 days in milliseconds
 
 // Entry point of the chrome extension.
 window.onload = function() {
@@ -45,7 +47,7 @@ function getUserFromLocal(tlUser) {
   var userStr = localStorage[tlUser.name];
   if (userStr) {
     var user = JSON.parse(userStr);
-    if (!isUserExpired(user)) {
+    if (!isUserExpired(user, cacheLifespan)) {
       updateForumUser(user, tlUser);
       return true;
     }
@@ -54,8 +56,7 @@ function getUserFromLocal(tlUser) {
 }
 
 // Checks to see if the given user information is too old.
-function isUserExpired(user) {
-  var lifespan = 1209600000; // 14 days in milliseconds
+function isUserExpired(user, lifespan) {
   var timestamp = new Date(user.modes[0].date);
   var now = new Date();
   return now - timestamp > lifespan;
@@ -86,7 +87,7 @@ function getUserFromDB(tlUser) {
     dataType: "json",
     success: function(user) {
       if (user.modes.length > 0) {
-        if (isUserExpired(user)) {
+        if (isUserExpired(user, dbLifespan)) {
           searchForTLUser(tlUser);
         } else {
           user.modes[0].league = getLeague(user.modes[0].leagueIndex);
