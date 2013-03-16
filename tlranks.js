@@ -28,14 +28,37 @@ function onTLPageLoaded(html) {
   testDBExists(onDBFound, onDBNotFound);
   function onDBFound(data) {
     $.each(tlUsers, function() {
-      getUserFromDB(this);
+      if (!getUserFromLocal(this))
+        getUserFromDB(this);
     });
   }
   function onDBNotFound(e) {
     $.each(tlUsers, function() {
-      searchForTLUser(this);
+      if (!getUserFromLocal(this))
+        searchForTLUser(this);
     });
   }
+}
+
+// Checks the local storage for the given tlUser info. Returns whether or not it exists.
+function getUserFromLocal(tlUser) {
+  var userStr = localStorage[tlUser.name];
+  if (userStr) {
+    var user = JSON.parse(userStr);
+    if (!isUserExpired(user)) {
+      updateForumUser(user, tlUser);
+      return true;
+    }
+  }
+  return false;
+}
+
+// Checks to see if the given user information is too old.
+function isUserExpired(user) {
+  var lifespan = 1209600000; // 14 days in milliseconds
+  var timestamp = new Date(user.modes[0].date);
+  var now = new Date();
+  return now - timestamp > lifespan;
 }
 
 // Creates a search request on sc2ranks for the given user.
@@ -57,16 +80,13 @@ function testDBExists(onDBFound, onDBNotFound) {
 // Retrieves information from the database for the given user. Searches for the user if 
 // not already in the database.
 function getUserFromDB(tlUser) {
-  var lifespan = 1209600000; // 14 days in milliseconds
   $.ajax({
     url: "http://" + hostname + "/get_user.php",
     data: {name: tlUser.name},
     dataType: "json",
     success: function(user) {
       if (user.modes.length > 0) {
-        var timestamp = new Date(user.modes[0].date);
-        var now = new Date();
-        if (now - timestamp > lifespan) {
+        if (isUserExpired(user)) {
           searchForTLUser(tlUser);
         } else {
           user.modes[0].league = getLeague(user.modes[0].leagueIndex);
@@ -199,6 +219,7 @@ function updateForumUser(user, tlUser) {
   var leagueIcon = getLeagueIcon(user.modes[0].league, user.modes[0].tier);
   var raceIcon = getRaceIcon(user.modes[0].race);
   tlUser.header.innerHTML = "&nbsp;" + user.region + "&nbsp;" + s[1] + "&nbsp;" + profileLink + "&nbsp;" + leagueIcon + "&nbsp;" + raceIcon + s[3];
+  localStorage[tlUser.name] = JSON.stringify(user);
 }
 
 // Given a league (bronze-grandmaster) and tier (0-3), get the url to the corresponding league icon.
