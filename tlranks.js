@@ -1,3 +1,5 @@
+var hostname = "76.104.218.28/tlranks";
+
 // Entry point of the chrome extension.
 window.onload = function() {
   onTLPageLoaded($("body"));
@@ -39,7 +41,7 @@ function searchForTLUser(tlUser) {
 // Tests to see if the database is accessible.
 function testDBExists(onDBFound, onDBNotFound) {
   $.ajax({
-    url: "http://localhost/tlranks/get_user.php",
+    url: "http://" + hostname + "/get_user.php",
     dataType: "json",
     success: onDBFound,
     error: onDBNotFound,
@@ -51,7 +53,7 @@ function testDBExists(onDBFound, onDBNotFound) {
 function getUserFromDB(tlUser) {
   var lifespan = 1209600000; // 14 days in milliseconds
   $.ajax({
-    url: "http://localhost/tlranks/get_user.php",
+    url: "http://" + hostname + "/get_user.php",
     data: {name: tlUser.name},
     dataType: "json",
     success: function(user) {
@@ -261,7 +263,7 @@ function getLeague(index) {
 function addUserToDB(user) {
   $.ajax({
     type: "POST",
-    url: "http://localhost/tlranks/add_user.php",
+    url: "http://" + hostname + "/add_user.php",
     data: user,
     success: function(data) {
       if (data.length > 0)

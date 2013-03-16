@@ -13,7 +13,7 @@
     }
   ],
   "permissions": [
-	"http://sc2ranks.com/*", "http://www.sc2ranks.com/*", "http://localhost/*"
+	"http://sc2ranks.com/*", "http://www.sc2ranks.com/*", "http://localhost/*", "http://76.104.218.28/*"
   ],
   
   "web_accessible_resources": [
