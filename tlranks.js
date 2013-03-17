@@ -1,5 +1,5 @@
-//var hostname = "76.104.218.28/tlranks";
-var hostname = "localhost/tlranks";
+var hostname = "76.104.218.28/tlranks";
+//var hostname = "localhost/tlranks";
 var dbLifespan = 604800000; // 7 days in milliseconds
 var cacheLifespan = 172800000 // 2 days in milliseconds
 
