@@ -9,8 +9,8 @@ try {
   $stmt->execute($data);
   
   foreach($_POST['modes'] as &$mode) {
-    $data = array($_POST['name'], $mode['name'], $mode['leagueIndex'], $mode['tier'], $mode['points'], $mode['race'], $mode['wins'], $mode['losses'], $mode['divisionRank'], $mode['regionRank'], $mode['worldRank']);
-    $stmt = $db->prepare("REPLACE INTO mode (name, mode, leagueIndex, tier, points, race, wins, losses, divisionRank, regionRank, worldRank, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())");
+    $data = array($_POST['name'], $mode['name'], $mode['leagueIndex'], $mode['tier'], $mode['points'], $mode['race'], $mode['wins'], $mode['losses'], $mode['divisionRank'], $mode['regionRank'], $mode['worldRank'], $mode['game']);
+    $stmt = $db->prepare("REPLACE INTO mode (name, mode, leagueIndex, tier, points, race, wins, losses, divisionRank, regionRank, worldRank, game, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())");
     $stmt->execute($data);
   }
   

@@ -176,6 +176,7 @@ function parseProfilePage(html, tlUser) {
     if (header.length > 0) {
       var mode = {};
       mode.name = parseInt(header[0].innerText.charAt(0));
+      mode.game = header[0].innerText.charAt(9);
       var numbers = $(this).find(".number");
       var leagueAndTier = $(this).find(".badge")[1].className;
       mode.league = (leagueAndTier.split("badge-")[1]).trim();
@@ -223,8 +224,19 @@ function updateForumUser(user, tlUser) {
   var profileLink = getProfileLink(tlUser.name, user.profile);
   var leagueIcon = getLeagueIcon(user.modes[0].league, user.modes[0].tier);
   var raceIcon = getRaceIcon(user.modes[0].race);
-  tlUser.header.innerHTML = "&nbsp;" + user.region + "&nbsp;" + s[1] + "&nbsp;" + profileLink + "&nbsp;" + leagueIcon + raceIcon + s[3];
+  tlUser.header.innerHTML = "&nbsp;" + getRegionIcon(user.region, user.modes[0].game) + "&nbsp;" + s[1] + "&nbsp;" + profileLink + "&nbsp;" + leagueIcon + raceIcon + s[3];
   localStorage[tlUser.name] = JSON.stringify(user);
+}
+
+// Given a region and game, gets the region styled with the corresponding game color.
+function getRegionIcon(region, game) {
+  var color;
+  switch (game) {
+    case 'H': color = "#60F"; break;
+    case 'W': color = "#00F"; break;
+    default: color = "#000"; break;
+  }
+  return "<span style='color:" + color + "'>" + region + "</span>";
 }
 
 // Given a league (bronze-grandmaster) and tier (0-3), get the url to the corresponding league icon.
