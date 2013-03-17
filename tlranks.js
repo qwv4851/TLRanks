@@ -145,6 +145,11 @@ function parseSearchPage(html, tlUser) {
     }
     if (bestUser != null)
       loadPage("http://sc2ranks.com" + bestUser.profile, parseProfilePage, tlUser);
+    else
+      addMissingUserToDB(tlUser.name);
+  }
+  else {
+    addMissingUserToDB(tlUser.name);
   }
 }
 
@@ -220,12 +225,19 @@ function extractString(html) {
 
 // Updates the post header of the given tlUser to link the profile page and show league.
 function updateForumUser(user, tlUser) {
+  if (user.modes == undefined || user.modes.length == 0)
+    return;
   var s = tlUser.header.innerHTML.split("&nbsp;");
   var profileLink = getProfileLink(tlUser.name, user.profile);
   var leagueIcon = getLeagueIcon(user.modes[0].league, user.modes[0].tier);
   var raceIcon = getRaceIcon(user.modes[0].race);
   tlUser.header.innerHTML = "&nbsp;" + getRegionIcon(user.region, user.modes[0].game) + "&nbsp;" + s[1] + "&nbsp;" + profileLink + "&nbsp;" + leagueIcon + raceIcon + s[3];
-  localStorage[tlUser.name] = JSON.stringify(user);
+  addUserToLocal(tlUser.name, user);
+}
+
+// Adds the given user to the local cache
+function addUserToLocal(name, user) {
+  localStorage[name] = JSON.stringify(user);
 }
 
 // Given a region and game, gets the region styled with the corresponding game color.
@@ -317,6 +329,16 @@ function addUserToDB(user) {
       console.log(e.message);
     }
   });
+}
+
+// Creates an empty user with the given name and adds it to the database and cache
+function addMissingUserToDB(name) {
+  var user = {
+    name: simplifyName(name),
+    date: new Date().toJSON()
+  };
+  addUserToDB(user);
+  addUserToLocal(name, user);
 }
 
 // Given a letter, gets the corresponding race
