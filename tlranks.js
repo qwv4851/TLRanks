@@ -246,7 +246,7 @@ function addUserToLocal(name, user) {
 function getRegionIcon(region, game) {
   var color;
   switch (game) {
-    case 'H': color = "#60F"; break;
+    case 'H': color = "#C0F"; break;
     case 'W': color = "#00F"; break;
     default: color = "#000"; break;
   }
