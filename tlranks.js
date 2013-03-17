@@ -1,5 +1,5 @@
-var hostname = "76.104.218.28/tlranks";
-//var hostname = "localhost/tlranks";
+//var hostname = "76.104.218.28/tlranks";
+var hostname = "localhost/tlranks";
 var dbLifespan = 604800000; // 7 days in milliseconds
 var cacheLifespan = 172800000 // 2 days in milliseconds
 
@@ -57,7 +57,7 @@ function getUserFromLocal(tlUser) {
 
 // Checks to see if the given user information is too old.
 function isUserExpired(user, lifespan) {
-  var timestamp = new Date(user.modes[0].date);
+  var timestamp = new Date(user.date);
   var now = new Date();
   return now - timestamp > lifespan;
 }
