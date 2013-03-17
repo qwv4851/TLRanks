@@ -57,6 +57,8 @@ function getUserFromLocal(tlUser) {
 
 // Checks to see if the given user information is too old.
 function isUserExpired(user, lifespan) {
+  if (user.date == undefined)
+    return true;
   var timestamp = new Date(user.date);
   var now = new Date();
   return now - timestamp > lifespan;
