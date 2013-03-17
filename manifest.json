@@ -8,7 +8,10 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://www.teamliquid.net/forum/viewmessage.php?topic_id=*"],
+      "matches": [
+        "http://www.teamliquid.net/forum/viewmessage.php?topic_id=*",
+        "http://www.teamliquid.net/blogs/viewblog.php?topic_id=*"
+      ],
       "js": ["tlranks.js", "jquery-1.9.1.min.js"]
     }
   ],
