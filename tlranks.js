@@ -1,7 +1,7 @@
 var hostname = "76.104.218.28/tlranks";
 //var hostname = "localhost/tlranks";
 var dbLifespan = 604800000; // 7 days in milliseconds
-var cacheLifespan = 172800000 // 2 days in milliseconds
+var cacheLifespan = 172800000; // 2 days in milliseconds
 
 // Entry point of the chrome extension.
 window.onload = function() {
@@ -28,16 +28,18 @@ function stripRelativeSrc(html) {
 function onTLPageLoaded(html) {
   var tlUsers = getUsersFromForum(html);
   testDBExists(onDBFound, onDBNotFound);
-  function onDBFound(data) {
+  function onDBFound() {
     $.each(tlUsers, function() {
-      if (!getUserFromLocal(this))
+      if (!getUserFromLocal(this)) {
         getUserFromDB(this);
+      }
     });
   }
-  function onDBNotFound(e) {
+  function onDBNotFound() {
     $.each(tlUsers, function() {
-      if (!getUserFromLocal(this))
+      if (!getUserFromLocal(this)) {
         searchForTLUser(this);
+      }
     });
   }
 }
@@ -57,8 +59,9 @@ function getUserFromLocal(tlUser) {
 
 // Checks to see if the given user information is too old.
 function isUserExpired(user, lifespan) {
-  if (user.date == undefined)
+  if (user.date === undefined) {
     return true;
+  }
   var timestamp = new Date(user.date);
   var now = new Date();
   return now - timestamp > lifespan;
@@ -76,7 +79,7 @@ function testDBExists(onDBFound, onDBNotFound) {
     url: "http://" + hostname + "/get_user.php",
     dataType: "json",
     success: onDBFound,
-    error: onDBNotFound,
+    error: onDBNotFound
   }); 
 }
 
@@ -96,13 +99,13 @@ function getUserFromDB(tlUser) {
           user.modes[0].race = getRace(user.modes[0].race);
           updateForumUser(user, tlUser);
         }
-      } else if (user.profile == null) {
+      } else if (user.profile === null) {
         searchForTLUser(tlUser);
       }
     },
     error: function(e) {
       console.log(e.message);
-    },
+    }
   });
 }
 
@@ -110,10 +113,12 @@ function getUserFromDB(tlUser) {
 // turned up a list of results or an exact match, parses the search page or profile page
 // respectively.
 function onSearchPageLoad(html, tlUser) {
-  if (html[1].innerText.indexOf("Searching") == 0) // gave us search page
+  if (html[1].innerText.indexOf("Searching") === 0) { // gave us search page
     parseSearchPage(html, tlUser);
-  else
+  }
+  else {
     parseProfilePage(html, tlUser);
+  }
 }
 
 // Extracts user information from the first page of search results. Users 
@@ -140,15 +145,17 @@ function parseSearchPage(html, tlUser) {
     sortUsersByRank(users);
     var bestUser = null;
     for (var i = 0; i < users.length; i++) {
-      if (users[i].name == targetName) {
+      if (users[i].name === targetName) {
         bestUser = users[i];
         break;
       }
     }
-    if (bestUser != null)
+    if (bestUser !== null) {
       loadPage("http://sc2ranks.com" + bestUser.profile, parseProfilePage, tlUser);
-    else
+    }
+    else {
       addMissingUserToDB(tlUser.name);
+    }
   }
   else {
     addMissingUserToDB(tlUser.name);
@@ -158,12 +165,13 @@ function parseSearchPage(html, tlUser) {
 // Sorts an array of users by their league and points.
 function sortUsersByRank(users) {
   users.sort(function(a, b) {
-    if (a.leagueIndex != b.leagueIndex)
+    if (a.leagueIndex !== b.leagueIndex) {
       return b.leagueIndex - a.leagueIndex;
-    else if (a.points != b.points)
+    }
+    else if (a.points !== b.points) {
       return b.points - a.points;
-    else
-      return 0;
+    }
+    return 0;
   });
 }
 
@@ -182,7 +190,7 @@ function parseProfilePage(html, tlUser) {
     var header = $(this).find(".headertext");
     if (header.length > 0) {
       var mode = {};
-      mode.name = parseInt(header[0].innerText.charAt(0));
+      mode.name = parseInt(header[0].innerText.charAt(0), 10);
       mode.game = header[0].innerText.charAt(9);
       var numbers = $(this).find(".number");
       var leagueAndTier = $(this).find(".badge")[1].className;
@@ -192,18 +200,18 @@ function parseProfilePage(html, tlUser) {
       mode.worldRank = numFromStr(numbers[0].innerText);
       mode.points = numFromStr(numbers[1].innerText);
       mode.race = $(this).find(".character")[0].children[0].className;
-      mode.divisionRank = numbers[2] != undefined ? numFromStr(numbers[2].innerText) : null;
-      mode.regionRank = numbers[3] != undefined ? numFromStr(numbers[3].innerText) : null;
-      mode.wins = parseInt($(this).find(".green")[0].innerText);
+      mode.divisionRank = numbers[2] !== undefined ? numFromStr(numbers[2].innerText) : null;
+      mode.regionRank = numbers[3] !== undefined ? numFromStr(numbers[3].innerText) : null;
+      mode.wins = parseInt($(this).find(".green")[0].innerText, 10);
       var red = $(this).find(".red");
-      mode.losses = red[0] != undefined ? parseInt(red[0].innerText) : 0;
+      mode.losses = red[0] !== undefined ? parseInt(red[0].innerText, 10) : 0;
       user.modes.push(mode);
     }
   });
   
   addUserToDB(user);
   
-  if (user.modes.length > 0 && user.modes[0].name == 1) {
+  if (user.modes.length > 0 && user.modes[0].name === 1) {
     updateForumUser(user, tlUser);
   }
 }
@@ -216,7 +224,7 @@ function simplifyName(name) {
 function numFromStr(str) {
   var matches = str.match(/\d{1,3}([,]\d{3})*$/);
   var noCommas = matches[0].replace(",", "");
-  return parseInt(noCommas);
+  return parseInt(noCommas, 10);
 }
 
 // Extracts the first instance of a quoted string from html. Used to extract urls.
@@ -227,8 +235,9 @@ function extractString(html) {
 
 // Updates the post header of the given tlUser to link the profile page and show league.
 function updateForumUser(user, tlUser) {
-  if (user.modes == undefined || user.modes.length == 0)
+  if (user.modes === undefined || user.modes.length === 0) {
     return;
+  }
   var s = tlUser.header.innerHTML.split("&nbsp;");
   var profileLink = getProfileLink(tlUser.name, user.profile);
   var leagueIcon = getLeagueIcon(user.modes[0].league, user.modes[0].tier);
@@ -267,8 +276,9 @@ function getRaceIcon(race) {
 
 // Fixes a relative URL for the given resource.
 function getURL(url) {
-  if (chrome.extension == undefined)
+  if (chrome === undefined || chrome.extension === undefined) {
     return url;
+  }
   return chrome.extension.getURL(url);
 }
 
@@ -282,7 +292,7 @@ function getUsersFromForum(html) {
   var users = [];
   var userHeaders = html.find(".forummsginfo");
   $.each(userHeaders, function() {
-    if (this.localName == "span") {
+    if (this.localName === "span") {
       var user = {};
       if (this.children.length > 1) { // mods have their names contained within a span
         user.name = this.children[1].innerText;
@@ -294,16 +304,6 @@ function getUsersFromForum(html) {
     }
   });
   return users;
-}
-
-// Given an array of html nodes, returns the index first node which contains the given class.
-function findNode(html, className) {
-  for (var i = 0; i < html.length; i++) {
-    var res = $(html[i]).find(className);
-    if (res.length > 0)
-      return i;
-  }
-  return -1;
 }
 
 var leagues = ["bronze", "silver", "gold", "platinum", "diamond", "master", "grandmaster"];
@@ -324,8 +324,9 @@ function addUserToDB(user) {
     url: "http://" + hostname + "/add_user.php",
     data: user,
     success: function(data) {
-      if (data.length > 0)
+      if (data.length > 0) {
         console.log(data);
+      }
     },
     error: function(e) {
       console.log(e.message);
@@ -346,9 +347,9 @@ function addMissingUserToDB(name) {
 // Given a letter, gets the corresponding race
 function getRace(letter) {
   switch (letter) {
-    case 'z': return "zerg"; break;
-    case 't': return "terran"; break;
-    case 'p': return "protoss"; break;
-    case 'r': return "random"; break;
+    case 'z': return "zerg";
+    case 't': return "terran";
+    case 'p': return "protoss";
+    case 'r': return "random";
   }
 }
