@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="jquery-1.9.1.min.js"></script>
+    <script type="text/javascript">
+      google.load('visualization', '1.0', {'packages':['corechart']});
+      google.setOnLoadCallback(function () {
+        $.getJSON("get_data.php", drawCharts);
+      });
+      
+      function createPie(title, keyName, valueName, keys, values, div) {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', keyName);
+        data.addColumn('number', valueName);
+        data.addRows(zip(keys, values));
+        var options = {'title':title,
+                       'width':500,
+                       'height':400};
+        var chart = new google.visualization.PieChart(document.getElementById(div));
+        chart.draw(data, options);
+      }
+      
+      function drawCharts(data) {
+        var modes = ['1v1', '2v2', '3v3', '4v4'];
+        var leagues = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master', 'Grandmaster'];
+        var teams = ['1v1', 'Teams'];
+        var game = ['WoL', 'HotS'];
+        var ladder = ['Ladder Games', 'No Ladder Games'];
+        var ladderData = [data.users, data.users - data.usersWithGames];
+        createPie('Mode Distribution', 'Mode', 'Player Count', modes, data.modes, 'mode_div');
+        createPie('1v1 League Distribution', 'League', 'Player Count', leagues, data.leagues, 'league_div');
+        createPie('1v1 vs Teams Only', 'League', 'Player Count', teams, data.teams, 'team_div');
+        createPie('Game', 'Game', 'Player Count', game, data.game, 'game_div');
+        createPie('Users with Ladder Games Played', 'Has Ladder Games', 'Player Count', ladder, ladderData, 'ladder_div');
+      }
+      
+      function zip(a, b) {
+        var length = Math.min(a.length, b.length);
+        var result = [];
+        for (var n = 0; n < length; n++) {
+          result.push([a[n], b[n]]);
+        }
+        return result;
+      }
+    </script>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td><div id="mode_div"></div></td>
+        <td><div id="league_div"></div></td>
+      </tr>
+      <tr>
+        <td><div id="team_div"></div></td>
+        <td><div id="game_div"></div></td>
+      </tr>
+      <tr>
+        <td><div id="ladder_div"></div></td>
+      </tr>
+    </table>
+  </body>
+</html>
