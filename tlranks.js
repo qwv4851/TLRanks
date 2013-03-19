@@ -98,6 +98,9 @@ function getUserFromDB(tlUser) {
         user.modes[0].race = getRace(user.modes[0].race);
         updateForumUser(user, tlUser);
       }
+      else {
+        addUserToLocal(tlUser.name, user);
+      }
     },
     error: function(e) {
       console.log(e.message);
@@ -334,7 +337,9 @@ function addUserToDB(user) {
 function addMissingUserToDB(name) {
   var user = {
     name: simplifyName(name),
-    date: new Date().toJSON()
+    date: new Date().toJSON(),
+    profile: null,
+    region: null
   };
   addUserToDB(user);
   addUserToLocal(name, user);
