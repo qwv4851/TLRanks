@@ -28,11 +28,14 @@
         var game = ['WoL', 'HotS'];
         var ladder = ['Ladder Games', 'No Ladder Games'];
         var ladderData = [data.users, data.users - data.usersWithGames];
+        var race = ['Protoss', 'Random', 'Terran', 'Zerg'];
+        
         createPie('Mode Distribution', 'Mode', 'Player Count', modes, data.modes, 'mode_div');
         createPie('1v1 League Distribution', 'League', 'Player Count', leagues, data.leagues, 'league_div');
         createPie('1v1 vs Teams Only', 'League', 'Player Count', teams, data.teams, 'team_div');
         createPie('Game', 'Game', 'Player Count', game, data.game, 'game_div');
         createPie('Users with Ladder Games Played', 'Has Ladder Games', 'Player Count', ladder, ladderData, 'ladder_div');
+        createPie('1v1 Race', '1v1 Race', 'Player Count', race, data.race, 'race_div');
       }
       
       function zip(a, b) {
@@ -57,6 +60,7 @@
       </tr>
       <tr>
         <td><div id="ladder_div"></div></td>
+        <td><div id="race_div"></div></td>
       </tr>
     </table>
   </body>

@@ -14,6 +14,11 @@ require 'database.php';
     $stmt->execute();
     $jsonData['leagues'] = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
     
+    $stmt = $db->prepare("SELECT COUNT(*) FROM mode WHERE mode=1 GROUP BY race");
+    $stmt->setFetchMode(PDO::FETCH_NUM);
+    $stmt->execute();
+    $jsonData['race'] = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    
     $jsonData['teams'] = array();
     
     $stmt = $db->prepare("SELECT COUNT(*) FROM mode WHERE mode=1 IN (SELECT mode FROM mode GROUP BY name)");
@@ -27,6 +32,12 @@ require 'database.php';
     $stmt->execute();
     $res = $stmt->fetch();
     array_push($jsonData['teams'], $res[0]);
+    
+    $stmt = $db->prepare("SELECT COUNT(*) FROM mode WHERE mode=1 GROUP BY RACE");
+    $stmt->setFetchMode(PDO::FETCH_NUM);
+    $stmt->execute();
+    $res = $stmt->fetch();
+    array_push($jsonData['race'], $res[0]);
     
     $jsonData['game'] = array();
     
