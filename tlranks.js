@@ -91,16 +91,12 @@ function getUserFromDB(tlUser) {
     data: {name: simplifyName(tlUser.name)},
     dataType: "json",
     success: function(user) {
-      if (user.modes.length > 0) {
-        if (isUserExpired(user, dbLifespan)) {
-          searchForTLUser(tlUser);
-        } else {
-          user.modes[0].league = getLeague(user.modes[0].leagueIndex);
-          user.modes[0].race = getRace(user.modes[0].race);
-          updateForumUser(user, tlUser);
-        }
-      } else if (user.profile === null) {
+      if (user.profile === undefined || isUserExpired(user, dbLifespan)) {
         searchForTLUser(tlUser);
+      } else if (user.modes.length > 0) {
+        user.modes[0].league = getLeague(user.modes[0].leagueIndex);
+        user.modes[0].race = getRace(user.modes[0].race);
+        updateForumUser(user, tlUser);
       }
     },
     error: function(e) {
