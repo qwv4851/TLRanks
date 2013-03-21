@@ -264,12 +264,14 @@ function getRegionIcon(region, game) {
 // Given a league (bronze-grandmaster) and tier (0-3), get the url to the corresponding league icon.
 function getLeagueIcon(league, tier) {
   var url = getURL("images/" + league + "_" + tier + ".png");
+  league = capitaliseFirstLetter(league);
   return "<img style='vertical-align:middle;' src='" + url + "' title='" + league + "' alt='" + league + "'>";
 }
 
 // Given a race, get the corresponding icon.
 function getRaceIcon(race) {
   var url = getURL("images/" + race + ".png");
+  race = capitaliseFirstLetter(race);
   return "<img style='vertical-align:middle;' src='" + url + "' title='" + race + "' alt='" + race + "'>";
 }
 
@@ -353,4 +355,9 @@ function getRace(letter) {
     case 'p': return "protoss";
     case 'r': return "random";
   }
+}
+
+// Capitalizes the first letter of the given string.
+function capitaliseFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
