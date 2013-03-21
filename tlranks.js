@@ -96,6 +96,7 @@ function getUserFromDB(tlUser) {
       } else if (user.modes.length > 0) {
         user.modes[0].league = getLeague(user.modes[0].leagueIndex);
         user.modes[0].race = getRace(user.modes[0].race);
+        user.region = getRegion(user.region.charAt(0));
         updateForumUser(user, tlUser);
       }
       else {
@@ -363,6 +364,17 @@ function getRace(letter) {
     case 't': return "terran";
     case 'p': return "protoss";
     case 'r': return "random";
+  }
+}
+
+// Given a letter, gets the corresponding region
+function getRegion(letter) {
+  switch (letter) {
+    case 'A': return "AM";
+    case 'C': return "CN";
+    case 'K': return "KR";
+    case 'E': return "EU";
+    case 'S': return "SEA";
   }
 }
 
