@@ -294,7 +294,7 @@ function getURL(url) {
 
 // Builds a link tag for the given username and profile.
 function getProfileLink(name, profile) {
-  return "<a href='http://sc2ranks.com" + profile + "'/>" + name + "</a>";
+  return "<a target='_blank' href='http://sc2ranks.com" + profile + "'/>" + name + "</a>";
 }
 
 // Extracts usernames and their post headers from a TeamLiquid forum thread.
