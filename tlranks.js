@@ -253,12 +253,21 @@ function addUserToLocal(name, user) {
 // Given a region and game, gets the region styled with the corresponding game color.
 function getRegionIcon(region, game) {
   var color;
+  var gameName;
   switch (game) {
-    case 'H': color = "#C0F"; break;
-    case 'W': color = "#00F"; break;
-    default: color = "#000"; break;
+    case 'H':
+      color = "#60237b";
+      gameName = "Heart of the Swarm";
+    break;
+    case 'W':
+		  color = "#194984";
+		  gameName = "Wings of Liberty";
+    break;
+    default: color = "#000";
+    break;
   }
-  return "<span style='color:" + color + "'>" + region + "</span>";
+  var versionURL = getURL("images/" + game + ".png");
+  return "<span style='color:" + color + ";font-weight:bold;'>" + region + " </span><img style='width:18px;height:22px;vertical-align:middle;' src='" + versionURL + "' title='" + gameName + "' alt='" + game +"' />";
 }
 
 // Given a league (bronze-grandmaster) and tier (0-3), get the url to the corresponding league icon.
