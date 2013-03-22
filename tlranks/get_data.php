@@ -21,13 +21,13 @@ require 'database.php';
     
     $jsonData['teams'] = array();
     
-    $stmt = $db->prepare("SELECT COUNT(*) FROM mode WHERE mode=1 IN (SELECT mode FROM mode GROUP BY name)");
+    $stmt = $db->prepare("SELECT COUNT(*) FROM (SELECT MIN(mode) as a FROM mode GROUP BY name) AS sub WHERE a=1");
     $stmt->setFetchMode(PDO::FETCH_NUM);
     $stmt->execute();
     $res = $stmt->fetch();
     array_push($jsonData['teams'], $res[0]);
     
-    $stmt = $db->prepare("SELECT COUNT(*) FROM mode WHERE mode!=1 IN (SELECT mode FROM mode GROUP BY name)");
+    $stmt = $db->prepare("SELECT COUNT(*) FROM (SELECT MIN(mode) as a FROM mode GROUP BY name) AS sub WHERE a!=1");
     $stmt->setFetchMode(PDO::FETCH_NUM);
     $stmt->execute();
     $res = $stmt->fetch();
