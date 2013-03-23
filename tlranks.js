@@ -239,7 +239,7 @@ function updateForumUser(user, tlUser) {
     return;
   }
   var s = tlUser.header.innerHTML.split("&nbsp;");
-  var profileLink = getProfileLink(tlUser.name, user.profile);
+  var profileLink = getProfileLink(tlUser.name, user);
   var leagueIcon = getLeagueIcon(user.modes[0].league, user.modes[0].tier);
   var raceIcon = getRaceIcon(user.modes[0].race);
   tlUser.header.innerHTML = "&nbsp;" + getRegionIcon(user.region, user.modes[0].game) + "&nbsp;" + s[1] + "&nbsp;" + profileLink + "&nbsp;" + leagueIcon + raceIcon + s[3];
@@ -293,9 +293,13 @@ function getURL(url) {
   return chrome.extension.getURL(url);
 }
 
-// Builds a link tag for the given username and profile.
-function getProfileLink(name, profile) {
-  return "<a target='_blank' href='http://sc2ranks.com" + profile + "'/>" + name + "</a>";
+// Builds a link tag for the given username and user.
+function getProfileLink(name, user) {
+  var wins = user.modes[0].wins;
+  var losses = user.modes[0].losses;
+  var percent = ((wins / (wins + losses))  * 100).toFixed(2);
+  return "<a target='_blank' href='http://sc2ranks.com" + user.profile + "' title='1v1 Record: " +
+         wins + "-" + losses + " (" + percent + "%)'/>" + name + "</a>";
 }
 
 // Extracts usernames and their post headers from a TeamLiquid forum thread.
