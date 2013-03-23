@@ -3,9 +3,6 @@
   "version": "1.0",
   "manifest_version": 2,
   "description": "Displays league icons and other information for TeamLiquid forum users.",
-  "browser_action": {
-    "default_icon": "/images/icon.png"
-  },
   "content_scripts": [
     {
       "matches": [
