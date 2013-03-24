@@ -9,6 +9,7 @@ window.onload = function() {
 };
 
 // Loads the given url and calls the onSuccess callback with the param tlUser.
+
 function loadPage(url, onSuccess, tlUser) {
   $.ajax({
     url: url,
@@ -19,15 +20,18 @@ function loadPage(url, onSuccess, tlUser) {
 }
 
 // Strips src links with relative urls from the given source.
+
 function stripRelativeSrc(html) {
   return html.replace(/src="\/.*?"/g, "");
 }
 
 // Called when a TeamLiquid page loads. Extracts poster information and attempts 
 // to search each poster on sc2ranks.
+
 function onTLPageLoaded(html) {
   var tlUsers = getUsersFromForum(html);
   testDBExists(onDBFound, onDBNotFound);
+
   function onDBFound() {
     $.each(tlUsers, function() {
       if (!getUserFromLocal(this)) {
@@ -35,6 +39,7 @@ function onTLPageLoaded(html) {
       }
     });
   }
+
   function onDBNotFound() {
     $.each(tlUsers, function() {
       if (!getUserFromLocal(this)) {
@@ -45,6 +50,7 @@ function onTLPageLoaded(html) {
 }
 
 // Checks the local storage for the given tlUser info. Returns whether or not it exists.
+
 function getUserFromLocal(tlUser) {
   var userStr = localStorage[tlUser.name];
   if (userStr) {
@@ -58,6 +64,7 @@ function getUserFromLocal(tlUser) {
 }
 
 // Checks to see if the given user information is too old.
+
 function isUserExpired(user, lifespan) {
   if (user.date === undefined) {
     return true;
@@ -68,27 +75,32 @@ function isUserExpired(user, lifespan) {
 }
 
 // Creates a search request on sc2ranks for the given user.
+
 function searchForTLUser(tlUser) {
   var searchURL = "http://www.sc2ranks.com/search/exact/all/" + simplifyName(tlUser.name);
   loadPage(searchURL, onSearchPageLoad, tlUser);
 }
 
 // Tests to see if the database is accessible.
+
 function testDBExists(onDBFound, onDBNotFound) {
   $.ajax({
     url: "http://" + hostname + "/get_user.php",
     dataType: "json",
     success: onDBFound,
     error: onDBNotFound
-  }); 
+  });
 }
 
 // Retrieves information from the database for the given user. Searches for the user if 
 // not already in the database.
+
 function getUserFromDB(tlUser) {
   $.ajax({
     url: "http://" + hostname + "/get_user.php",
-    data: {name: simplifyName(tlUser.name)},
+    data: {
+      name: simplifyName(tlUser.name)
+    },
     dataType: "json",
     success: function(user) {
       if (user.profile === undefined || isUserExpired(user, dbLifespan)) {
@@ -98,8 +110,7 @@ function getUserFromDB(tlUser) {
         user.modes[0].race = getRace(user.modes[0].race);
         user.region = getRegion(user.region.charAt(0));
         updateForumUser(user, tlUser);
-      }
-      else {
+      } else {
         addUserToLocal(tlUser.name, user);
       }
     },
@@ -112,11 +123,11 @@ function getUserFromDB(tlUser) {
 // Called when a sc2ranks search page loads. Depending on whether or not the search
 // turned up a list of results or an exact match, parses the search page or profile page
 // respectively.
+
 function onSearchPageLoad(html, tlUser) {
   if (html[1].innerText.indexOf("Searching") === 0) { // gave us search page
     parseSearchPage(html, tlUser);
-  }
-  else {
+  } else {
     parseProfilePage(html, tlUser);
   }
 }
@@ -124,6 +135,7 @@ function onSearchPageLoad(html, tlUser) {
 // Extracts user information from the first page of search results. Users 
 // are then ranked and the highest ranked user matching exactly the searched
 // name is selected for profile parsing.
+
 function parseSearchPage(html, tlUser) {
   var targetName = html[1].innerText.split(" ")[2];
   var users = [];
@@ -152,23 +164,21 @@ function parseSearchPage(html, tlUser) {
     }
     if (bestUser !== null) {
       loadPage("http://sc2ranks.com" + bestUser.profile, parseProfilePage, tlUser);
-    }
-    else {
+    } else {
       addMissingUserToDB(tlUser.name);
     }
-  }
-  else {
+  } else {
     addMissingUserToDB(tlUser.name);
   }
 }
 
 // Sorts an array of users by their league and points.
+
 function sortUsersByRank(users) {
   users.sort(function(a, b) {
     if (a.leagueIndex !== b.leagueIndex) {
       return b.leagueIndex - a.leagueIndex;
-    }
-    else if (a.points !== b.points) {
+    } else if (a.points !== b.points) {
       return b.points - a.points;
     }
     return 0;
@@ -177,6 +187,7 @@ function sortUsersByRank(users) {
 
 // Extracts user information from their profile. If 1v1 results are found, their post
 // header on TeamLiquid is updated to show their stats.
+
 function parseProfilePage(html, tlUser) {
   var user = {};
   var nameAndRegion = html.find(".name")[0];
@@ -208,9 +219,9 @@ function parseProfilePage(html, tlUser) {
       user.modes.push(mode);
     }
   });
-  
+
   addUserToDB(user);
-  
+
   if (user.modes.length > 0 && user.modes[0].name === 1) {
     updateForumUser(user, tlUser);
   }
@@ -221,6 +232,7 @@ function simplifyName(name) {
 }
 
 // Extracts the first number from the given string.
+
 function numFromStr(str) {
   var matches = str.match(/\d{1,3}([,]\d{3})*$/);
   var noCommas = matches[0].replace(",", "");
@@ -228,12 +240,14 @@ function numFromStr(str) {
 }
 
 // Extracts the first instance of a quoted string from html. Used to extract urls.
+
 function extractString(html) {
   var quotedStr = html.match(/".*?"/)[0];
   return quotedStr.substr(1, quotedStr.length - 2);
 }
 
 // Updates the post header of the given tlUser to link the profile page and show league.
+
 function updateForumUser(user, tlUser) {
   if (user.modes === undefined || user.modes.length === 0) {
     return;
@@ -247,11 +261,13 @@ function updateForumUser(user, tlUser) {
 }
 
 // Adds the given user to the local cache
+
 function addUserToLocal(name, user) {
   localStorage[name] = JSON.stringify(user);
 }
 
 // Given a region and game, gets the region styled with the corresponding game color.
+
 function getRegionIcon(region, game) {
   var color;
   var gameName;
@@ -259,19 +275,21 @@ function getRegionIcon(region, game) {
     case 'H':
       color = "#60237b";
       gameName = "Heart of the Swarm";
-    break;
+      break;
     case 'W':
-		  color = "#194984";
-		  gameName = "Wings of Liberty";
-    break;
-    default: color = "#000";
-    break;
+      color = "#194984";
+      gameName = "Wings of Liberty";
+      break;
+    default:
+      color = "#000";
+      break;
   }
   var versionURL = getURL("images/" + game + ".png");
-  return "<span style='color:" + color + ";font-weight:bold;'>" + region + " </span><img style='width:18px;height:22px;vertical-align:middle;' src='" + versionURL + "' title='" + gameName + "' alt='" + game +"' />";
+  return "<span style='color:" + color + ";font-weight:bold;'>" + region + " </span><img style='width:18px;height:22px;vertical-align:middle;' src='" + versionURL + "' title='" + gameName + "' alt='" + game + "' />";
 }
 
 // Given a league (bronze-grandmaster) and tier (0-3), get the url to the corresponding league icon.
+
 function getLeagueIcon(league, tier) {
   var url = getURL("images/" + league + "_" + tier + ".png");
   league = capitaliseFirstLetter(league);
@@ -279,6 +297,7 @@ function getLeagueIcon(league, tier) {
 }
 
 // Given a race, get the corresponding icon.
+
 function getRaceIcon(race) {
   var url = getURL("images/" + race + ".png");
   race = capitaliseFirstLetter(race);
@@ -286,6 +305,7 @@ function getRaceIcon(race) {
 }
 
 // Fixes a relative URL for the given resource.
+
 function getURL(url) {
   if (chrome === undefined || chrome.extension === undefined) {
     return url;
@@ -294,15 +314,16 @@ function getURL(url) {
 }
 
 // Builds a link tag for the given username and user.
+
 function getProfileLink(name, user) {
   var wins = user.modes[0].wins;
   var losses = user.modes[0].losses;
-  var percent = ((wins / (wins + losses))  * 100).toFixed(2);
-  return "<a target='_blank' href='http://sc2ranks.com" + user.profile + "' title='1v1 Record: " +
-         wins + "-" + losses + " (" + percent + "%)'/>" + name + "</a>";
+  var percent = ((wins / (wins + losses)) * 100).toFixed(2);
+  return "<a target='_blank' href='http://sc2ranks.com" + user.profile + "' title='1v1 Record: " + wins + "-" + losses + " (" + percent + "%)'/>" + name + "</a>";
 }
 
 // Extracts usernames and their post headers from a TeamLiquid forum thread.
+
 function getUsersFromForum(html) {
   var users = [];
   var userHeaders = html.find(".forummsginfo");
@@ -323,16 +344,19 @@ function getUsersFromForum(html) {
 
 var leagues = ["bronze", "silver", "gold", "platinum", "diamond", "master", "grandmaster"];
 // Gets the corresponding index to a given league name.
+
 function getLeagueIndex(league) {
   return leagues.indexOf(league.toLowerCase());
 }
 
 // Gets the corresponding league to a given index
+
 function getLeague(index) {
   return leagues[index];
 }
 
 // Sends user information to be added to the database.
+
 function addUserToDB(user) {
   $.ajax({
     type: "POST",
@@ -350,6 +374,7 @@ function addUserToDB(user) {
 }
 
 // Creates an empty user with the given name and adds it to the database and cache
+
 function addMissingUserToDB(name) {
   var user = {
     name: simplifyName(name),
@@ -362,27 +387,39 @@ function addMissingUserToDB(name) {
 }
 
 // Given a letter, gets the corresponding race
+
 function getRace(letter) {
   switch (letter) {
-    case 'z': return "zerg";
-    case 't': return "terran";
-    case 'p': return "protoss";
-    case 'r': return "random";
+    case 'z':
+      return "zerg";
+    case 't':
+      return "terran";
+    case 'p':
+      return "protoss";
+    case 'r':
+      return "random";
   }
 }
 
 // Given a letter, gets the corresponding region
+
 function getRegion(letter) {
   switch (letter) {
-    case 'A': return "AM";
-    case 'C': return "CN";
-    case 'K': return "KR";
-    case 'E': return "EU";
-    case 'S': return "SEA";
+    case 'A':
+      return "AM";
+    case 'C':
+      return "CN";
+    case 'K':
+      return "KR";
+    case 'E':
+      return "EU";
+    case 'S':
+      return "SEA";
   }
 }
 
 // Capitalizes the first letter of the given string.
+
 function capitaliseFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
