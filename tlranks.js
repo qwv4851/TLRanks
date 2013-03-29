@@ -318,7 +318,7 @@ function getURL(url) {
 function getProfileLink(name, user) {
   var wins = user.modes[0].wins;
   var losses = user.modes[0].losses;
-  var percent = ((wins / (wins + losses)) * 100).toFixed(2);
+  var percent = (wins + losses == 0) ? "0.00" : ((wins / (wins + losses)) * 100).toFixed(2);
   return "<a target='_blank' href='http://sc2ranks.com" + user.profile + "' title='1v1 Record: " + wins + "-" + losses + " (" + percent + "%)'/>" + name + "</a>";
 }
 
