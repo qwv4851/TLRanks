@@ -1,0 +1,3 @@
+Team Liquid Ranks is a Google Chrome extension which displays ladder information for users of the teamliquid.net forum. This is accomplished by using sc2ranks.com to make a best guess at matching forum usernames with their battle.net counterparts and parsing their profiles for leagues, races, and other relevant information.
+
+Special thanks to Rumudiez.
