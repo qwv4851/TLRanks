@@ -1,6 +1,6 @@
 {
-  "name": "TL Ranks",
-  "version": "1.0",
+  "name": "Team Liquid Ranks",
+  "version": "1.1",
   "manifest_version": 2,
   "description": "Displays league icons and other information for TeamLiquid forum users.",
   "content_scripts": [
