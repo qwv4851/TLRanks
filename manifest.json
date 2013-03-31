@@ -1,6 +1,6 @@
 {
   "name": "Team Liquid Ranks",
-  "version": "1.1",
+  "version": "1.0",
   "manifest_version": 2,
   "description": "Displays league icons and other information for TeamLiquid forum users.",
   "content_scripts": [
@@ -13,7 +13,7 @@
     }
   ],
   "permissions": [
-	"http://sc2ranks.com/*", "http://www.sc2ranks.com/*", "http://localhost/*", "http://76.104.218.28/*"
+	"http://sc2ranks.com/*", "http://localhost/*", "http://76.104.218.28/*"
   ],
   
   "web_accessible_resources": [

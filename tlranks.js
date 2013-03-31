@@ -77,7 +77,7 @@ function isUserExpired(user, lifespan) {
 // Creates a search request on sc2ranks for the given user.
 
 function searchForTLUser(tlUser) {
-  var searchURL = "http://www.sc2ranks.com/search/exact/all/" + simplifyName(tlUser.name);
+  var searchURL = "http://sc2ranks.com/search/exact/all/" + simplifyName(tlUser.name);
   loadPage(searchURL, onSearchPageLoad, tlUser);
 }
 
