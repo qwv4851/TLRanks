@@ -415,6 +415,8 @@ function getRegion(letter) {
       return "EU";
     case 'S':
       return "SEA";
+    default:
+      return "";
   }
 }
 
