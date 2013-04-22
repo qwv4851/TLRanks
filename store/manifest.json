@@ -9,11 +9,11 @@
         "http://www.teamliquid.net/forum/viewmessage.php?topic_id=*",
         "http://www.teamliquid.net/blogs/viewblog.php?topic_id=*"
       ],
-      "js": ["tlranks.js", "jquery-1.9.1.min.js"]
+      "js": ["tlranks.min.js", "jquery-1.9.1.min.js"]
     }
   ],
   "permissions": [
-	"http://sc2ranks.com/*", "http://localhost/*", "http://76.104.218.28/*"
+	"http://sc2ranks.com/*", "http://76.104.218.28/*"
   ],
   
   "web_accessible_resources": [
